@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
   verify();
-}, []);
+}, [token]);
 
 
   const login = async (email, password) => {
