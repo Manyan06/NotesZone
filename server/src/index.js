@@ -31,7 +31,8 @@ const io = new SocketIOServer(server, {
 // ===== MIDDLEWARES =====
 app.use(cors({
   origin: CLIENT_ORIGIN,
-  credentials: true
+  credentials: true,
+  
 }));
 
 app.use(express.json({ limit: "1mb" }));
