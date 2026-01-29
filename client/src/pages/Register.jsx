@@ -82,7 +82,7 @@ export default function Register() {
                   onChange={(e) =>
                     setForm({ ...form, name: e.target.value })
                   }
-                  placeholder="John Doe"
+                  placeholder="Name"
                   className="h-12 px-4 rounded-lg bg-[#05010A] border border-purple-600/50 text-white placeholder:text-purple-400/50 focus:outline-none focus:ring-2 focus:ring-purple-600"
                 />
               </div>
