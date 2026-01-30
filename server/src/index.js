@@ -33,9 +33,13 @@ const io = new SocketIOServer(server, {
 // ===== MIDDLEWARES =====
 app.use(cors({
   origin: CLIENT_ORIGIN,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
   
 }));
+
+//Handle preflight requests
+app.options("*", cors());
 
 app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
