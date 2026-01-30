@@ -18,7 +18,8 @@ const app = express();
 const server = http.createServer(app);
 
 // ===== CORS ORIGIN =====
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+// const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "https://noteszone0.netlify.app";
 
 // ===== SOCKET.IO =====
 const io = new SocketIOServer(server, {
@@ -27,6 +28,7 @@ const io = new SocketIOServer(server, {
     credentials: true
   }
 });
+
 
 // ===== MIDDLEWARES =====
 app.use(cors({
@@ -42,7 +44,7 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", noteRoutes);
 
-// ===== HEALTH CHECK =====
+// ===== CHECK =====
 app.get("/", (req, res) => {
   res.send("Server running");
 });
