@@ -31,15 +31,53 @@ const io = new SocketIOServer(server, {
 
 
 // ===== MIDDLEWARES =====
-app.use(cors({
-  origin: CLIENT_ORIGIN,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
+// app.use(cors({
+//   origin: CLIENT_ORIGIN,
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   credentials: true,
   
+// }));
+
+// //Handle preflight requests
+// app.options("*", cors());
+
+// ===== MIDDLEWARES =====
+
+// Log origin (temporary debug)
+app.use((req, res, next) => {
+  console.log("Request Origin:", req.headers.origin);
+  next();
+});
+
+// CORS
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow server-to-server
+
+    if (origin === CLIENT_ORIGIN) {
+      return callback(null, true);
+    }
+
+    console.error("Blocked CORS origin:", origin);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }));
 
-//Handle preflight requests
-app.options("*", cors());
+// Preflight handler
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", CLIENT_ORIGIN);
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Credentials", "true");
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 
 app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
