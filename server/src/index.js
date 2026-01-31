@@ -21,26 +21,29 @@ const server = http.createServer(app);
 // CORS (MUST BE FIRST)
 // ==================================================
 
-const CLIENT_ORIGIN =
-  process.env.CLIENT_ORIGIN || "https://noteszone0.netlify.app";
+// const CLIENT_ORIGIN =
+//   process.env.CLIENT_ORIGIN || "https://noteszone0.netlify.app";
 
-// Force preflight handling
-app.use((req, res, next) => {
-  if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Origin", CLIENT_ORIGIN);
-    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    return res.status(200).end();
-  }
-  next();
-});
+const CLIENT_ORIGIN = [
+  "https://noteszone0.netlify.app",
+  "https://69750ebc-noteszone0.netlify.app"
+];
+
 
 // Enable CORS
+// app.use(cors({
+//   origin: CLIENT_ORIGIN,
+//   credentials: true
+// }));
+
 app.use(cors({
-  origin: CLIENT_ORIGIN,
+  origin: [
+    "https://noteszone0.netlify.app",
+    "https://69750ebc-noteszone0.netlify.app"
+  ],
   credentials: true
 }));
+
 
 // ==================================================
 // SOCKET.IO
@@ -48,10 +51,14 @@ app.use(cors({
 
 const io = new SocketIOServer(server, {
   cors: {
-    origin: CLIENT_ORIGIN,
+    origin: [
+      "https://noteszone0.netlify.app",
+      "https://69750ebc-noteszone0.netlify.app"
+    ],
     credentials: true
   }
 });
+
 
 // ==================================================
 // MIDDLEWARES
