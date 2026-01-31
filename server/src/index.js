@@ -17,18 +17,21 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// ===== CORS CONFIG (MUST BE FIRST) =====
+// ==================================================
+// CORS (MUST BE FIRST)
+// ==================================================
+
 const CLIENT_ORIGIN =
   process.env.CLIENT_ORIGIN || "https://noteszone0.netlify.app";
 
-// Handle preflight first
+// Force preflight handling
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Origin", CLIENT_ORIGIN);
-    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.header("Access-Control-Allow-Credentials", "true");
-    return res.sendStatus(204);
+    res.setHeader("Access-Control-Allow-Origin", CLIENT_ORIGIN);
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    return res.status(200).end();
   }
   next();
 });
@@ -39,15 +42,10 @@ app.use(cors({
   credentials: true
 }));
 
+// ==================================================
+// SOCKET.IO
+// ==================================================
 
-// const app = express();
-// const server = http.createServer(app);
-
-// // ===== CORS ORIGIN =====
-// // const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
-// const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "https://noteszone0.netlify.app";
-
-// ===== SOCKET.IO =====
 const io = new SocketIOServer(server, {
   cors: {
     origin: CLIENT_ORIGIN,
@@ -55,69 +53,29 @@ const io = new SocketIOServer(server, {
   }
 });
 
-
-// ===== MIDDLEWARES =====
-// app.use(cors({
-//   origin: CLIENT_ORIGIN,
-//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//   credentials: true,
-  
-// }));
-
-// //Handle preflight requests
-// app.options("*", cors());
-
-// ===== MIDDLEWARES =====
-
-// // Log origin (temporary debug)
-// app.use((req, res, next) => {
-//   console.log("Request Origin:", req.headers.origin);
-//   next();
-// });
-
-// CORS
-// app.use(cors({
-//   origin: (origin, callback) => {
-//     if (!origin) return callback(null, true); // allow server-to-server
-
-//     if (origin === CLIENT_ORIGIN) {
-//       return callback(null, true);
-//     }
-
-//     console.error("Blocked CORS origin:", origin);
-//     return callback(new Error("Not allowed by CORS"));
-//   },
-//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//   allowedHeaders: ["Content-Type", "Authorization"],
-//   credentials: true
-// }));
-
-// // Preflight handler
-// app.use((req, res, next) => {
-//   if (req.method === "OPTIONS") {
-//     res.header("Access-Control-Allow-Origin", CLIENT_ORIGIN);
-//     res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-//     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//     res.header("Access-Control-Allow-Credentials", "true");
-//     return res.sendStatus(204);
-//   }
-//   next();
-// });
-
+// ==================================================
+// MIDDLEWARES
+// ==================================================
 
 app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
 
-// ===== ROUTES =====
+// ==================================================
+// ROUTES
+// ==================================================
+
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", noteRoutes);
 
-// ===== CHECK =====
+// Health check
 app.get("/", (req, res) => {
   res.send("Server running");
 });
 
-// ===== SOCKET AUTH =====
+// ==================================================
+// SOCKET AUTH
+// ==================================================
+
 io.use((socket, next) => {
   try {
     const token =
@@ -140,7 +98,10 @@ io.use((socket, next) => {
   }
 });
 
-// ===== SOCKET EVENTS =====
+// ==================================================
+// SOCKET EVENTS
+// ==================================================
+
 io.on("connection", (socket) => {
 
   socket.on("join_note", async ({ noteId }) => {
@@ -163,7 +124,7 @@ io.on("connection", (socket) => {
         access
       });
 
-    } catch (err) {
+    } catch {
       socket.emit("error_message", { message: "Join failed" });
     }
   });
@@ -188,18 +149,22 @@ io.on("connection", (socket) => {
       await note.save();
 
       const fresh = await Note.findById(noteId).lean();
+
       io.to(`note_${noteId}`).emit("server_note_update", {
         ...fresh,
         access
       });
 
-    } catch (err) {
-      // intentionally silent
+    } catch {
+      // silent
     }
   });
 });
 
-// ===== SERVER START =====
+// ==================================================
+// START SERVER
+// ==================================================
+
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, async () => {
