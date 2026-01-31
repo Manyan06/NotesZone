@@ -17,9 +17,35 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// ===== CORS ORIGIN =====
-// const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "https://noteszone0.netlify.app";
+// ===== CORS CONFIG (MUST BE FIRST) =====
+const CLIENT_ORIGIN =
+  process.env.CLIENT_ORIGIN || "https://noteszone0.netlify.app";
+
+// Handle preflight first
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", CLIENT_ORIGIN);
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Credentials", "true");
+    return res.sendStatus(204);
+  }
+  next();
+});
+
+// Enable CORS
+app.use(cors({
+  origin: CLIENT_ORIGIN,
+  credentials: true
+}));
+
+
+// const app = express();
+// const server = http.createServer(app);
+
+// // ===== CORS ORIGIN =====
+// // const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+// const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "https://noteszone0.netlify.app";
 
 // ===== SOCKET.IO =====
 const io = new SocketIOServer(server, {
@@ -43,40 +69,40 @@ const io = new SocketIOServer(server, {
 
 // ===== MIDDLEWARES =====
 
-// Log origin (temporary debug)
-app.use((req, res, next) => {
-  console.log("Request Origin:", req.headers.origin);
-  next();
-});
+// // Log origin (temporary debug)
+// app.use((req, res, next) => {
+//   console.log("Request Origin:", req.headers.origin);
+//   next();
+// });
 
 // CORS
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow server-to-server
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     if (!origin) return callback(null, true); // allow server-to-server
 
-    if (origin === CLIENT_ORIGIN) {
-      return callback(null, true);
-    }
+//     if (origin === CLIENT_ORIGIN) {
+//       return callback(null, true);
+//     }
 
-    console.error("Blocked CORS origin:", origin);
-    return callback(new Error("Not allowed by CORS"));
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+//     console.error("Blocked CORS origin:", origin);
+//     return callback(new Error("Not allowed by CORS"));
+//   },
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+//   credentials: true
+// }));
 
-// Preflight handler
-app.use((req, res, next) => {
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Origin", CLIENT_ORIGIN);
-    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.header("Access-Control-Allow-Credentials", "true");
-    return res.sendStatus(204);
-  }
-  next();
-});
+// // Preflight handler
+// app.use((req, res, next) => {
+//   if (req.method === "OPTIONS") {
+//     res.header("Access-Control-Allow-Origin", CLIENT_ORIGIN);
+//     res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+//     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//     res.header("Access-Control-Allow-Credentials", "true");
+//     return res.sendStatus(204);
+//   }
+//   next();
+// });
 
 
 app.use(express.json({ limit: "1mb" }));
