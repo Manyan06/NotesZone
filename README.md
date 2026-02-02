@@ -63,6 +63,13 @@ A real-time collaborative note-taking web application built with the MERN stack 
 
 ---
 
+## 🌐 Deployment
+
+- **Frontend**: Deployed on [Netlify](https://www.netlify.com/)
+- **Backend**: Deployed on [Render](https://render.com/)
+
+---
+
 ## 📂 Project Structure
 
 ```
