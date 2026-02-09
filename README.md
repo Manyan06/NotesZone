@@ -6,7 +6,7 @@ A real-time collaborative note-taking web application built with the MERN stack 
 
 ---
 
-## ✨ Features
+## Features
 
 ### 🔐 Authentication & Security
 - User registration and login with JWT authentication
@@ -206,7 +206,7 @@ Navigate to `http://localhost:5173` and start taking notes! 🎉
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -225,7 +225,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Socket.io for real-time capabilities
 - MongoDB for flexible data storage
