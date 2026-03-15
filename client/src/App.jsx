@@ -13,6 +13,7 @@ import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Editor from "./pages/Editor.jsx";
 import { AuthContext } from "./context/AuthContext.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const PrivateRoute = ({ children }) => {
   const { token } = useContext(AuthContext);
@@ -30,11 +31,13 @@ export default function App() {
 
   return (
     <>
+      <GoogleOAuthProvider clientId="1036364208878-gnafa7pak5r4cl6pcnq3kafk5fp24fn9.apps.googleusercontent.com">
       {/* ✅ Navbar only for non-auth pages */}
       {!hideNavbar && (
         <nav className="bg-[#05010A]/80 border-b border-purple-600/30 px-6 py-3 flex items-center justify-between text-white">
 
-
+        
+       
 
           <Link
             to="/dashboard"
@@ -115,6 +118,7 @@ export default function App() {
           }
         />
       </Routes>
+      </GoogleOAuthProvider>
     </>
   );
 }

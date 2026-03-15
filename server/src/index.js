@@ -38,12 +38,19 @@ const CLIENT_ORIGIN = [
 
 app.use(cors({
   origin: [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
     "https://noteszone0.netlify.app",
     "https://69750ebc-noteszone0.netlify.app"
   ],
+  methods: ["GET","POST","PUT","DELETE"],
   credentials: true
 }));
 
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  next();
+});
 
 // ==================================================
 // SOCKET.IO
