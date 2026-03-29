@@ -1,6 +1,6 @@
 # 📝 NotesZone
 
-A real-time collaborative note-taking web application built with the MERN stack (MongoDB, Express, React, Node.js) and Socket.io. Create, share, and edit notes with role-based access control and live synchronization.
+A real-time collaborative note-taking web application built with the MERN stack (MongoDB, Express, React, Node.js and Socket.io. Create, share and edit notes with role-based access control (RBAC) and live synchronization.
 
 🌐 **[Live Demo](https://noteszone0.netlify.app)**
 
