@@ -15,7 +15,7 @@ A real-time collaborative note-taking web application built with the MERN stack 
 - Token-based authorization
 
 ### 📄 Note Management
-- Create, read, update, and delete personal notes
+- Create, read, update and delete personal notes
 - Rich text editing interface
 - Real-time auto-save functionality
 - Organize notes by ownership and sharing status
@@ -231,6 +231,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - MongoDB for flexible data storage
 - React and Vite for modern frontend tooling
 - Tailwind CSS for beautiful styling
-
+- NodeJS and ExpressJS for backend server
 ---
 
